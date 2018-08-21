@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 //import firebase from 'react-native-firebase';
-import { Text, View, StyleSheet, TouchableHighlight, Share, TouchableOpacity } from 'react-native';
+import firebase from '@firebase/app';
+import '@firebase/firestore';
+import { Text, View, StyleSheet, TouchableHighlight, Share, TouchableOpacity, TextInput } from 'react-native';
 
 export default class Notes extends Component {
   static navigationOptions = {
@@ -10,12 +12,15 @@ export default class Notes extends Component {
             backgroundColor:'#349bff',
         }
   }
+  state = { noteData: ''};
+
 
   constructor(props) {
     super(props);
     this._shareMessage = this._shareMessage.bind(this);
     this._showResult = this._showResult.bind(this);
-    this.state = { result: ''};
+    this._saveNote = this._saveNote.bind(this);
+    //this.state = { result: ''};
    //this.ref = firebase.firestore().collection('testNotes');
   }
 
@@ -27,18 +32,35 @@ export default class Notes extends Component {
     Share.share({ message: 'this is a shared message'})
     .then(this._showResult);
   }
+  _saveNote(){
+    this.ref = firebase.firestore().collection('Notes');
+    this.ref.add({
+      note: this.state.noteData,
+    });
+  }
   render() {
     return(
       <View style={styles.container}>
-        <Text style={styles.heading}>
-          Placeholder for notes
-        </Text>
+        <TextInput
+          style = {styles.input}
+          onSubmitEditing={() => this.noteData.focus()}
+          value={this.state.noteData}
+          onChangeText={noteData => this.setState({ noteData })}
+        />
         <TouchableOpacity
-        onPress={this._shareMessage}
-        style = {styles.buttonContainer}
+          onPress={this._shareMessage}
+          style = {styles.buttonContainer}
         >
           <Text style = {styles.buttonText}>
             Share
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={this._saveNote}
+          style = {styles.buttonContainer}
+        >
+          <Text style = {styles.buttonText}>
+            Save
           </Text>
         </TouchableOpacity>
       </View>
@@ -78,7 +100,7 @@ const styles = StyleSheet.create({
     opacity: 0.8
   },
   input: {
-    height: 40,
+    height: 200,
     backgroundColor: 'rgba(255,255,255,0.2)',
     color: 'white',
     paddingHorizontal:10,

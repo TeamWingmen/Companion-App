@@ -23,6 +23,10 @@ export default class Login extends Component {
         storageBucket: "smartnotes-ef8bb.appspot.com",
         messagingSenderId: "793803621543"
     });
+    
+    //const firestore = firebase.firestore();
+    //const settings = { timestampsInSnapshots:true};
+    //firestore.settings(settings);
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {

@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Image, Text, KeyboardAvoidingView, TouchableOpacity, TextInput, StatusBar} from 'react-native';
 import firebase from 'firebase';
+//import firebase from '@firebase/app';
+//import '@firebase/firestore';
 import { Button, Card, CardSection, Input, Spinner, Header} from './common';
 import Modal from "react-native-modal";
 
@@ -14,6 +16,12 @@ export default class SignUp extends Component {
         }
   }
   state = { email: '', password: '', confirmPassword: '',error: '', firstName:'', lastName:'', loading: false, loggedIn: null};
+  constructor() {
+    super();
+
+  }
+
+
 
   onButtonPress() {
     const { email, password, confirmPassword } = this.state
@@ -28,6 +36,25 @@ export default class SignUp extends Component {
       .then(this.onLoginSuccess.bind(this))
       .catch(this.onLoginfail.bind(this));
     }
+
+    firebase.database().ref('Users').push(
+      {
+        first: this.state.firstName,
+        last: this.state.lastName,
+        email: this.state.email
+      }
+    ).then(() => {
+      console.log('INSERTED !');
+    }).catch((error) => {
+      console.log(error);
+    });
+
+    //this.ref = firebase.firestore().collection('Users');
+    //this.ref.add({
+    //  first: this.state.firstName,
+    //  last: this.state.lastName,
+    //  email: this.state.email,
+    //});
   }
 
   onLoginfail() {
