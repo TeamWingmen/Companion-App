@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 //import firebase from 'react-native-firebase';
 import firebase from '@firebase/app';
 import '@firebase/firestore';
-import { Text, View, StyleSheet, TouchableHighlight, Share, TouchableOpacity, TextInput } from 'react-native';
+import { FlatList, Text, View, StyleSheet, TouchableHighlight, Share, TouchableOpacity, TextInput, ScrollView, Button } from 'react-native';
+import Note from './Note';
 
 export default class Notes extends Component {
   static navigationOptions = {
@@ -12,59 +13,92 @@ export default class Notes extends Component {
             backgroundColor:'#349bff',
         }
   }
-  state = { noteData: ''};
 
-
-  constructor(props) {
-    super(props);
-    this._shareMessage = this._shareMessage.bind(this);
-    this._showResult = this._showResult.bind(this);
-    this._saveNote = this._saveNote.bind(this);
-    //this.state = { result: ''};
-   //this.ref = firebase.firestore().collection('testNotes');
-  }
-
-  _showResult(result) {
-    this.setState({result})
-  }
-
-  _shareMessage(){
-    Share.share({ message: 'this is a shared message'})
-    .then(this._showResult);
-  }
-  _saveNote(){
+  constructor() {
+    super();
     this.ref = firebase.firestore().collection('Notes');
-    this.ref.add({
-      note: this.state.noteData,
-    });
+    this.unsubscribe = null;
+
+    this.state = {
+      textInput: '',
+      timeStampInput:'',
+      loading: true,
+      Notes: []
+    };
   }
+
+ updateTextInput(value) {
+   this.setState({ textInput: value});
+ }
+ updateTimeStampInput(value) {
+   this.setState({ timeStampInput: value});
+ }
+
+ addNote() {
+   this.ref.add({
+     title: this.state.textInput,
+     timeStamp: this.state.timeStampInput
+   });
+
+   this.setState({
+     textInput:'',
+     timeStampInput:''
+   });
+ }
+
+ componentDidMount() {
+   this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate)
+ }
+
+ componentWillUnmount() {
+   this.unsubscribe();
+ }
+
+ onCollectionUpdate = (querySnapshot) => {
+   const Notes = [];
+
+   querySnapshot.forEach((doc) => {
+     const {title, timeStamp } = doc.data();
+
+     Notes.push({
+       key:doc.id,
+       doc,
+       title,
+       timeStamp
+     });
+   });
+
+   this.setState({
+     Notes,
+     loading: false
+   });
+ }
+
+
   render() {
     return(
-      <View style={styles.container}>
-        <TextInput
-          style = {styles.input}
-          onSubmitEditing={() => this.noteData.focus()}
-          value={this.state.noteData}
-          onChangeText={noteData => this.setState({ noteData })}
-        />
-        <TouchableOpacity
-          onPress={this._shareMessage}
-          style = {styles.buttonContainer}
-        >
-          <Text style = {styles.buttonText}>
-            Share
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={this._saveNote}
-          style = {styles.buttonContainer}
-        >
-          <Text style = {styles.buttonText}>
-            Save
-          </Text>
-        </TouchableOpacity>
-      </View>
-    );
+      <View style={{ flex: 1}}>
+      <FlatList
+        data = {this.state.Notes}
+        renderItem = {({ item }) => <Note {...item} />}
+      />
+      <TextInput
+        placeholder = {'add Note'}
+        value = {this.state.textInput}
+        onChangeText = { (text) => this.updateTextInput(text)}
+      />
+      <TextInput
+        placeholder = {'add Timestamp'}
+        value = {this.state.timeStampInput}
+        onChangeText = { (text) => this.updateTimeStampInput(text)}
+      />
+      <Button
+        title = {'add Note'}
+        disabled = {!this.state.textInput.length}
+        onPress = {() => {this.addNote()}}
+      />
+    </View>
+  );
   }
 }
 

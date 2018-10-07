@@ -23,10 +23,10 @@ export default class Login extends Component {
         storageBucket: "smartnotes-ef8bb.appspot.com",
         messagingSenderId: "793803621543"
     });
-    
-    //const firestore = firebase.firestore();
-    //const settings = { timestampsInSnapshots:true};
-    //firestore.settings(settings);
+
+    const firestore = firebase.firestore();
+    const settings = { timestampsInSnapshots:true};
+    firestore.settings(settings);
 
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -86,10 +86,26 @@ export default class Login extends Component {
             <StatusBar barStyle="light-content"/>
             <TouchableOpacity
               style = {styles.buttonContainer}
+              onPress={() => this.props.navigation.navigate('Tasks')}
+            >
+              <Text style = {styles.buttonText}>
+                View Tasks
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style = {styles.buttonContainer}
               onPress={() => this.props.navigation.navigate('Notes')}
             >
               <Text style = {styles.buttonText}>
                 View Notes
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style = {styles.buttonContainer}
+              onPress={() => this.props.navigation.navigate('Recordings')}
+            >
+              <Text style = {styles.buttonText}>
+                View Recordings
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -168,17 +184,28 @@ export default class Login extends Component {
   render() {
     return(
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
+        <Image
+          style={{flex:1,
+          justifyContent: 'center',
+          resizeMode: 'center',
+          backgroundColor: '#ccc',
+          position: 'absolute',
+          width: '100%',
+          height: '100%'
+          }}
+          source={require('../../images/astro.jpg')}
+        />
         <View style={styles.headingWrapper}>
-        <Text style={styles.heading}> Smart Notes </Text>
+          <Text style={styles.heading}> Smart Notes </Text> 
         </View>
         <View style={styles.logoContainer}>
           <Image
           style={styles.logo}
           source={require('../../images/BlueLogo.png')}
-          />
-          <Text style={styles.title}>
+         />
+         <Text style={styles.title}>
             The smarter solution to your note taking needs
-          </Text>
+         </Text>
         </View>
 
         <View style={styles.formContainer}>
@@ -230,7 +257,7 @@ const styles = StyleSheet.create({
     borderRadius: 25
   },
   buttonContainer: {
-    backgroundColor: '#349bff',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     paddingVertical: 15,
     marginBottom: 20,
     borderRadius: 25

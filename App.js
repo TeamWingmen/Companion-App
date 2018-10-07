@@ -8,10 +8,13 @@ import { Platform, StyleSheet, Text, View} from 'react-native';
 import firebase from 'firebase';
 import { Spinner, Button } from './src/components/common';
 import Login from './src/components/Login/Login';
-import Notes from './src/components/Notes';
+import Tasks from './src/components/Tasks';
 import SignUp from './src/components/SignUp';
 import Connect from './src/components/Connect';
 import { StackNavigator } from 'react-navigation';
+import Recordings from './src/components/Recordings';
+import Notes from './src/components/Notes';
+
 
 class App extends Component {
 
@@ -26,7 +29,9 @@ export default App;
 
 const AppStackNavigator = new StackNavigator({
   Login: {screen: Login},
-  Notes: {screen: Notes},
+  Tasks: {screen: Tasks},
   SignUp: {screen: SignUp},
-  Connect: {screen: Connect}
+  Connect: {screen: Connect},
+  Recordings: {screen: Recordings},
+  Notes: {screen: Notes}
 })

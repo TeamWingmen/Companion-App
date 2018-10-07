@@ -1,9 +1,7 @@
-//need to show error when confirmPassword != password and need asiign firstName and lastName to firebase user
+//need to show error when confirmPassword != password
 import React, { Component } from 'react';
 import { StyleSheet, View, Image, Text, KeyboardAvoidingView, TouchableOpacity, TextInput, StatusBar} from 'react-native';
 import firebase from 'firebase';
-//import firebase from '@firebase/app';
-//import '@firebase/firestore';
 import { Button, Card, CardSection, Input, Spinner, Header} from './common';
 import Modal from "react-native-modal";
 
@@ -22,7 +20,9 @@ export default class SignUp extends Component {
   }
 
 
-
+  //This function will check if the both passwords entered are correct
+  //if they are correct then a firebase account will be made with the given email and password and will then be logged in
+  //the users details will then be stored to the database
   onButtonPress() {
     const { email, password, confirmPassword } = this.state
 
@@ -49,18 +49,13 @@ export default class SignUp extends Component {
       console.log(error);
     });
 
-    //this.ref = firebase.firestore().collection('Users');
-    //this.ref.add({
-    //  first: this.state.firstName,
-    //  last: this.state.lastName,
-    //  email: this.state.email,
-    //});
   }
-
+  //this function will display an error message to the screen if login was unsuccessfull
   onLoginfail() {
     this.setState({ error: 'Authentication Failed, please check credendials and try again', loading: false })
   }
 
+  //if login is a success then all the variable will be cleared
   onLoginSuccess() {
 
     this.setState({
@@ -74,6 +69,7 @@ export default class SignUp extends Component {
     });
   }
 
+  //this will make the button appear to the screen and will call the onButtonPress function when pressed
   renderButton() {
     if (this.state.loading) {
       return <Spinner size="small" />;
@@ -92,6 +88,17 @@ export default class SignUp extends Component {
   render() {
     return(
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <Image
+        style={{flex:1,
+        justifyContent: 'center',
+        resizeMode: 'center',
+        backgroundColor: '#ccc',
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
+        }}
+        source={require('../images/astro.jpg')}
+      />
         <View style={styles.logoContainer}>
           <Image
           style={styles.logo}
@@ -164,6 +171,7 @@ export default class SignUp extends Component {
   }
 }
 
+//the style settings for this page
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -205,7 +213,7 @@ const styles = StyleSheet.create({
     borderRadius: 25
   },
   buttonContainer: {
-    backgroundColor: '#349bff',
+    backgroundColor: 'rgba(255,255,255,0.2)',
     paddingVertical: 15,
     marginBottom: 20,
     borderRadius: 25
